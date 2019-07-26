@@ -7,7 +7,7 @@ import QtLocation 5.3
 import QtPositioning 5.6
 
 ApplicationWindow {
-    id: window
+    id: root
     visible: true
     width: 800
     height: 480
@@ -23,6 +23,8 @@ ApplicationWindow {
         sourceModel: biclouModel
     }
 
+    property int selectedIndex: -1
+
     RowLayout {
         anchors.fill: parent
 
@@ -36,6 +38,8 @@ ApplicationWindow {
                 delegate: ItemDelegate {
                     width: parent.width
                     text: model.name + " (" + model.available_bikes + "/" + model.bike_stands + ")"
+                    onClicked: root.selectedIndex = model.index
+                    highlighted: root.selectedIndex === model.index
                 }
             }
         }
@@ -53,7 +57,7 @@ ApplicationWindow {
                     coordinate: QtPositioning.coordinate(position.lat, position.lng)
                     anchorPoint: Qt.point(10, 10)
                     sourceItem: Rectangle {
-                        color: "orange"
+                        color: root.selectedIndex === model.index ? "purple" : "orange"
                         width: 20
                         radius: width/2
                         height: width
@@ -68,6 +72,10 @@ ApplicationWindow {
                                 FadeAnimation { fadeDuration: 500; target: availableBikesLabel }
                             }
                             onTextChanged: print(name, text)
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: root.selectedIndex = model.index
                         }
                     }
                 }
